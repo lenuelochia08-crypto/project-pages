@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enrollment Reference Form</title>
+    <style>
+        :root {
+            --primary-green: #2e7d32;
+            --light-green: #e8f5e9;
+            --button-green: #4caf50;
+            --dark-green: #1b5e20;
+            --text-dark: #333333;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--light-green);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .form-container {
+            background-color: #ffffff;
+            border-top: 8px solid var(--primary-green);
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            max-width: 500px;
+            width: 100%;
+        }
+
+        .note {
+            background-color: var(--light-green);
+            color: var(--dark-green);
+            padding: 15px;
+            border-left: 4px solid var(--primary-green);
+            border-radius: 4px;
+            font-size: 0.95em;
+            line-height: 1.5;
+            margin-bottom: 25px;
+            font-weight: 500;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--primary-green);
+            font-weight: bold;
+        }
+
+        input[type="text"], 
+        select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #a5d6a7;
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-size: 1em;
+            transition: border-color 0.3s ease;
+        }
+
+        input[type="text"]:focus, 
+        select:focus {
+            outline: none;
+            border-color: var(--primary-green);
+            box-shadow: 0 0 5px rgba(46, 125, 50, 0.2);
+        }
+
+        #specifyContainer {
+            display: none; /* Hidden by default */
+            margin-top: 15px;
+            padding-left: 15px;
+            border-left: 2px dashed var(--primary-green);
+        }
+
+        button {
+            width: 100%;
+            background-color: var(--button-green);
+            color: white;
+            padding: 14px;
+            border: none;
+            border-radius: 4px;
+            font-size: 1.1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            background-color: var(--primary-green);
+        }
+
+        button:disabled {
+            background-color: #a5d6a7;
+            cursor: not-allowed;
+        }
+
+        #confirmationMessage {
+            display: none;
+            text-align: center;
+            color: var(--primary-green);
+            font-size: 1.2em;
+            font-weight: bold;
+            padding: 40px 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="form-container">
+        
+        <div id="formContent">
+            <div class="note">
+                <strong>Note:</strong> This form serves as reference for students who are officially enrolled in GEC Subject: READING IN PHILIPPINE HISTORY, all data collected will be used in final grading of the course subject.
+            </div>
+
+            <form id="studentForm">
+                <div class="form-group">
+                    <label for="idNumber">I.D. Number</label>
+                    <input type="text" id="idNumber" name="idNumber" required placeholder="e.g. 2023-12345">
+                </div>
+
+                <div class="form-group">
+                    <label for="name">Full Name</label>
+                    <input type="text" id="name" name="name" required placeholder="Last Name, First Name">
+                </div>
+
+                <div class="form-group">
+                    <label for="courseSec">Course / Section</label>
+                    <input type="text" id="courseSec" name="courseSec" required placeholder="e.g. BSCS 1-A">
+                </div>
+
+                <div class="form-group">
+                    <label for="status">Enrollment Status</label>
+                    <select id="status" name="status" required onchange="toggleSpecifyInput()">
+                        <option value="" disabled selected>Select your status...</option>
+                        <option value="Enrolled">Enrolled</option>
+                        <option value="Taken-up already">Taken-up already</option>
+                        <option value="Others">Others</option>
+                    </select>
+                </div>
+
+                <div id="specifyContainer" class="form-group">
+                    <label for="specifyOther">Please specify:</label>
+                    <input type="text" id="specifyOther" name="specifyOther" placeholder="State your reason/status">
+                </div>
+
+                <button type="submit" id="submitBtn">Submit Data</button>
+            </form>
+        </div>
+
+        <div id="confirmationMessage">
+            ✅ your response has been recorded.
+        </div>
+
+    </div>
+    <script>
+        // --- PASTE YOUR GOOGLE SCRIPT WEB APP URL HERE ---
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbz5HNW2DyBvIZ8NAQnrTnggidXzbNlt00CtAp3xSBJyz7xuThM67Pk8P2Zs9P-kvGI/exec';
+        
+        const form = document.getElementById('studentForm');
+        const submitBtn = document.getElementById('submitBtn');
+
+        // Function to toggle the "Please specify" field
+        function toggleSpecifyInput() {
+            const statusSelect = document.getElementById('status');
+            const specifyContainer = document.getElementById('specifyContainer');
+            const specifyInput = document.getElementById('specifyOther');
+
+            if (statusSelect.value === 'Others') {
+                specifyContainer.style.display = 'block';
+                specifyInput.required = true;
+            } else {
+                specifyContainer.style.display = 'none';
+                specifyInput.required = false;
+                specifyInput.value = ''; // Clear out the value if they change their mind
+            }
+        }
+
+        // Handle Form Submission via GET
+        form.addEventListener('submit', e => {
+            e.preventDefault();
+            submitBtn.disabled = true;
+            submitBtn.innerText = 'Submitting...';
+
+            // Gather all the form data
+            const formData = new FormData(form);
+            
+            // Convert the form data into URL parameters (e.g., ?idNumber=123&name=John...)
+            const queryString = new URLSearchParams(formData).toString();
+            
+            // Append the query string to your Google Script URL
+            const fetchURL = `${scriptURL}?${queryString}`;
+
+            // Send the GET request
+            fetch(fetchURL, { method: 'GET' })
+                .then(response => {
+                    // Hide the form and show the confirmation message
+                    document.getElementById('formContent').style.display = 'none';
+                    document.getElementById('confirmationMessage').style.display = 'block';
+                })
+                .catch(error => {
+                    console.error('Error!', error.message);
+                    alert("There was an error submitting the form. Please try again.");
+                    submitBtn.disabled = false;
+                    submitBtn.innerText = 'Submit Data';
+                });
+        });
+    </script>
